@@ -1,0 +1,74 @@
+/* Canvas Scanlines */
+.scanlines {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, transparent 50%, rgba(0, 0, 0, 0.15) 50%);
+    background-size: 100% 4px;
+    z-index: 10;
+    pointer-events: none;
+    animation: scanlines-scroll 20s linear infinite;
+    opacity: 0.6;
+}
+
+@keyframes scanlines-scroll {
+    0% { background-position: 0 0; }
+    100% { background-position: 0 1000px; }
+}
+
+/* Hero Animations */
+.float-bob-1, .float-bob-2 {
+    position: relative;
+}
+
+.float-bob-1 {
+    animation: floatBob 4s ease-in-out infinite;
+}
+
+.float-bob-2 {
+    animation: floatBob 4s ease-in-out infinite 2s;
+}
+
+@keyframes floatBob {
+    0%, 100% { top: 0; }
+    50% { top: -6px; }
+}
+
+.typewriter-glitch {
+    position: relative;
+    display: inline-block;
+    animation: subtleGlitch 4s infinite;
+}
+
+.typewriter-glitch::after {
+    content: '|';
+    animation: blink 1s step-end infinite;
+    margin-left: 2px;
+    color: var(--primary-glow);
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+@keyframes subtleGlitch {
+    0%, 96%, 100% {
+        text-shadow: none;
+        transform: none;
+    }
+    97% {
+        text-shadow: 2px 0 var(--primary-glow), -2px 0 var(--secondary-glow);
+        transform: translateX(-1px);
+    }
+    98% {
+        text-shadow: -2px 0 var(--primary-glow), 2px 0 var(--secondary-glow);
+        transform: translateX(1px);
+    }
+    99% {
+        text-shadow: none;
+        transform: none;
+    }
+}
