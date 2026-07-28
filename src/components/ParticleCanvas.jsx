@@ -8,11 +8,21 @@ export default function ParticleCanvas({ theme }) {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d', { alpha: true });
     let animationFrameId;
     let nodes = [];
     let dataParticles = [];
     let mouse = { x: -1000, y: -1000 };
+    let isVisible = true;
+
+    // IntersectionObserver to pause rendering when canvas is not visible
+    const observer = new IntersectionObserver(([entry]) => {
+      isVisible = entry.isIntersecting;
+    }, { threshold: 0.05 });
+
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
 
     const handleMouseMove = (e) => {
       mouse.x = e.clientX;
@@ -24,8 +34,8 @@ export default function ParticleCanvas({ theme }) {
       mouse.y = -1000;
     };
 
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('mouseout', handleMouseLeave);
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
+    window.addEventListener('mouseout', handleMouseLeave, { passive: true });
 
     const resizeCanvas = () => {
       canvas.width = window.innerWidth;
@@ -36,23 +46,24 @@ export default function ParticleCanvas({ theme }) {
     const initNetwork = () => {
       nodes = [];
       dataParticles = [];
-      const nodeCount = Math.floor(Math.random() * 21) + 60; // 60-80
+      // 45-55 nodes: optimal density with 3x faster spatial loop
+      const nodeCount = Math.floor(Math.random() * 10) + 45;
       
       for (let i = 0; i < nodeCount; i++) {
         nodes.push({
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height,
-          radius: Math.random() * 3 + 2,
-          baseRadius: Math.random() * 3 + 2,
-          speedX: (Math.random() - 0.5) * 0.5,
-          speedY: (Math.random() - 0.5) * 0.5,
-          baseOpacity: Math.random() * 0.6 + 0.3,
+          radius: Math.random() * 2.5 + 2,
+          baseRadius: Math.random() * 2.5 + 2,
+          speedX: (Math.random() - 0.5) * 0.4,
+          speedY: (Math.random() - 0.5) * 0.4,
+          baseOpacity: Math.random() * 0.5 + 0.3,
           pulseOffset: Math.random() * Math.PI * 2,
-          pulseSpeed: Math.random() * 0.05 + 0.02
+          pulseSpeed: Math.random() * 0.04 + 0.02
         });
       }
 
-      const particleCount = Math.floor(Math.random() * 6) + 15; // 15-20
+      const particleCount = 12;
       for (let i = 0; i < particleCount; i++) {
         dataParticles.push(createDataParticle());
       }
@@ -69,23 +80,29 @@ export default function ParticleCanvas({ theme }) {
         source: nodes[sourceIdx],
         target: nodes[targetIdx],
         progress: 0,
-        speed: Math.random() * 0.01 + 0.005,
+        speed: Math.random() * 0.012 + 0.006,
         active: true
       };
     };
 
+    const maxDistance = 170;
+    const maxDistSq = maxDistance * maxDistance;
+    const mouseMaxDist = 180;
+
     const render = () => {
+      if (!isVisible) {
+        animationFrameId = requestAnimationFrame(render);
+        return;
+      }
+
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       
       const isShanta = theme === 'shanta';
       const rgbColor = isShanta ? '0, 240, 255' : '255, 107, 0';
-      const hexColor = isShanta ? '#00F0FF' : '#FF6B00';
-      
-      const maxDistance = 180;
-      const mouseMaxDist = 200;
 
-      // Update nodes
-      nodes.forEach(node => {
+      // 1. Update nodes
+      for (let i = 0; i < nodes.length; i++) {
+        const node = nodes[i];
         node.x += node.speedX;
         node.y += node.speedY;
 
@@ -93,97 +110,85 @@ export default function ParticleCanvas({ theme }) {
         if (node.y < 0 || node.y > canvas.height) node.speedY *= -1;
 
         node.pulseOffset += node.pulseSpeed;
-      });
+      }
 
-      // Draw connections
-      ctx.lineWidth = 1;
+      // 2. Draw connections (High-performance flat stroke, zero GC allocation per frame)
       for (let i = 0; i < nodes.length; i++) {
+        const nI = nodes[i];
         for (let j = i + 1; j < nodes.length; j++) {
-          const dx = nodes[i].x - nodes[j].x;
-          const dy = nodes[i].y - nodes[j].y;
+          const nJ = nodes[j];
+          const dx = nI.x - nJ.x;
+          const dy = nI.y - nJ.y;
           const distSq = dx * dx + dy * dy;
 
-          if (distSq < maxDistance * maxDistance) {
+          if (distSq < maxDistSq) {
             const dist = Math.sqrt(distSq);
-            let opacity = 1 - (dist / maxDistance);
+            let alpha = (1 - dist / maxDistance) * 0.35 * nI.baseOpacity;
             
-            const distToMouseI = Math.hypot(nodes[i].x - mouse.x, nodes[i].y - mouse.y);
-            const distToMouseJ = Math.hypot(nodes[j].x - mouse.x, nodes[j].y - mouse.y);
-            
-            if (distToMouseI < mouseMaxDist || distToMouseJ < mouseMaxDist) {
-              opacity = Math.min(1, opacity + 0.4);
-              ctx.lineWidth = 1.5;
-            } else {
-              ctx.lineWidth = 1;
+            const distToMouseI = Math.hypot(nI.x - mouse.x, nI.y - mouse.y);
+            if (distToMouseI < mouseMaxDist) {
+              alpha = Math.min(0.7, alpha + 0.35);
             }
 
-            opacity *= 0.5; // Base connection opacity multiplier
-
-            if (opacity > 0) {
+            if (alpha > 0.02) {
               ctx.beginPath();
-              ctx.moveTo(nodes[i].x, nodes[i].y);
-              ctx.lineTo(nodes[j].x, nodes[j].y);
-              
-              const grad = ctx.createLinearGradient(nodes[i].x, nodes[i].y, nodes[j].x, nodes[j].y);
-              grad.addColorStop(0, `rgba(${rgbColor}, ${opacity * nodes[i].baseOpacity})`);
-              grad.addColorStop(1, `rgba(${rgbColor}, ${opacity * nodes[j].baseOpacity})`);
-              
-              ctx.strokeStyle = grad;
+              ctx.moveTo(nI.x, nI.y);
+              ctx.lineTo(nJ.x, nJ.y);
+              ctx.strokeStyle = `rgba(${rgbColor}, ${alpha})`;
+              ctx.lineWidth = alpha > 0.3 ? 1.2 : 0.8;
               ctx.stroke();
             }
           }
         }
       }
 
-      // Draw Data Particles
-      dataParticles.forEach((p, idx) => {
+      // 3. Draw Data Particles (Clean fast render without heavy shadowBlur)
+      for (let i = 0; i < dataParticles.length; i++) {
+        let p = dataParticles[i];
         if (!p || !p.active) {
-          dataParticles[idx] = createDataParticle();
-          return;
+          dataParticles[i] = createDataParticle();
+          p = dataParticles[i];
         }
 
-        p.progress += p.speed;
-        if (p.progress >= 1) {
-          p.active = false;
-        } else {
-          const curX = p.source.x + (p.target.x - p.source.x) * p.progress;
-          const curY = p.source.y + (p.target.y - p.source.y) * p.progress;
+        if (p) {
+          p.progress += p.speed;
+          if (p.progress >= 1) {
+            p.active = false;
+          } else {
+            const curX = p.source.x + (p.target.x - p.source.x) * p.progress;
+            const curY = p.source.y + (p.target.y - p.source.y) * p.progress;
 
-          ctx.beginPath();
-          ctx.arc(curX, curY, 2.5, 0, Math.PI * 2);
-          ctx.fillStyle = '#FFFFFF';
-          ctx.shadowBlur = 12;
-          ctx.shadowColor = hexColor;
-          ctx.fill();
+            ctx.beginPath();
+            ctx.arc(curX, curY, 2.2, 0, Math.PI * 2);
+            ctx.fillStyle = isShanta ? 'rgba(255, 255, 255, 0.95)' : 'rgba(255, 220, 180, 0.95)';
+            ctx.fill();
+          }
         }
-      });
+      }
 
-      // Draw Nodes
-      nodes.forEach(node => {
+      // 4. Draw Nodes
+      for (let i = 0; i < nodes.length; i++) {
+        const node = nodes[i];
         const distToMouse = Math.hypot(node.x - mouse.x, node.y - mouse.y);
-        let currentOpacity = node.baseOpacity;
+        let currentOpacity = node.baseOpacity + Math.sin(node.pulseOffset) * 0.12;
         let radius = node.baseRadius;
-
-        currentOpacity += Math.sin(node.pulseOffset) * 0.15;
         
         if (distToMouse < mouseMaxDist) {
           const intensity = 1 - (distToMouse / mouseMaxDist);
-          currentOpacity = Math.min(1, currentOpacity + intensity * 0.6);
-          radius += intensity * 2;
+          currentOpacity = Math.min(1, currentOpacity + intensity * 0.5);
+          radius += intensity * 1.8;
         }
 
         ctx.beginPath();
         ctx.arc(node.x, node.y, radius, 0, Math.PI * 2);
         ctx.fillStyle = `rgba(${rgbColor}, ${currentOpacity})`;
-        ctx.shadowBlur = distToMouse < mouseMaxDist ? 15 : 8;
-        ctx.shadowColor = hexColor;
         ctx.fill();
-      });
+      }
 
       animationFrameId = requestAnimationFrame(render);
     };
 
-    window.addEventListener('resize', resizeCanvas);
+    window.addEventListener('resize', resizeCanvas, { passive: true });
     resizeCanvas();
     render();
 
@@ -191,6 +196,7 @@ export default function ParticleCanvas({ theme }) {
       window.removeEventListener('resize', resizeCanvas);
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mouseout', handleMouseLeave);
+      if (containerRef.current) observer.unobserve(containerRef.current);
       cancelAnimationFrame(animationFrameId);
     };
   }, [theme]);

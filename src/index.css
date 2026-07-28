@@ -158,12 +158,13 @@ p { line-height: 1.7; }
     right: -100px;
     width: 450px;
     height: 450px;
-    background: radial-gradient(circle, var(--orb-1-color) 0%, transparent 70%);
+    background: radial-gradient(circle, var(--orb-1-color) 0%, rgba(0, 240, 255, 0.05) 35%, transparent 70%);
     border-radius: 50%;
-    filter: blur(80px);
-    animation: floatOrb 12s ease-in-out infinite alternate;
+    animation: floatOrb 14s ease-in-out infinite alternate;
     pointer-events: none;
     z-index: 0;
+    will-change: transform;
+    transform: translateZ(0);
 }
 
 .section-padding::after {
@@ -173,12 +174,13 @@ p { line-height: 1.7; }
     left: -120px;
     width: 380px;
     height: 380px;
-    background: radial-gradient(circle, var(--orb-2-color) 0%, transparent 70%);
+    background: radial-gradient(circle, var(--orb-2-color) 0%, rgba(112, 0, 255, 0.05) 35%, transparent 70%);
     border-radius: 50%;
-    filter: blur(90px);
-    animation: floatOrb 15s ease-in-out 3s infinite alternate-reverse;
+    animation: floatOrb 18s ease-in-out 3s infinite alternate-reverse;
     pointer-events: none;
     z-index: 0;
+    will-change: transform;
+    transform: translateZ(0);
 }
 
 @keyframes floatOrb {

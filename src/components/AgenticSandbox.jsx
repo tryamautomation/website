@@ -139,19 +139,15 @@ function NeuralCanvas({ currentStepIndex, isExecuting }) {
         ctx.moveTo(n1.x, n1.y);
         ctx.lineTo(n2.x, n2.y);
         if (isActive && isExecuting) {
-          ctx.strokeStyle = 'rgba(0, 240, 255, 0.35)';
+          ctx.strokeStyle = 'rgba(0, 240, 255, 0.6)';
           ctx.lineWidth = 2;
-          ctx.shadowColor = '#00F0FF';
-          ctx.shadowBlur = 8;
         } else {
           ctx.strokeStyle = 'rgba(255, 255, 255, 0.06)';
           ctx.lineWidth = 1;
-          ctx.shadowBlur = 0;
         }
         ctx.setLineDash(isActive ? [] : [4, 6]);
         ctx.stroke();
         ctx.setLineDash([]);
-        ctx.shadowBlur = 0;
       });
 
       // Data flow particles along connections
@@ -170,11 +166,8 @@ function NeuralCanvas({ currentStepIndex, isExecuting }) {
         const alpha = dp.progress < 0.2 ? dp.progress * 5 : dp.progress > 0.8 ? (1 - dp.progress) * 5 : 1;
         ctx.beginPath();
         ctx.arc(px, py, 3, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(0, 240, 255, ${alpha * 0.9})`;
-        ctx.shadowColor = '#00F0FF';
-        ctx.shadowBlur = 12;
+        ctx.fillStyle = `rgba(0, 240, 255, ${alpha * 0.95})`;
         ctx.fill();
-        ctx.shadowBlur = 0;
       }
 
       // Agent nodes (the 4 big circles)
@@ -189,12 +182,9 @@ function NeuralCanvas({ currentStepIndex, isExecuting }) {
           const pulseR = 28 + Math.sin(time * 3 + idx) * 4;
           ctx.beginPath();
           ctx.arc(nx, ny, pulseR, 0, Math.PI * 2);
-          ctx.strokeStyle = `rgba(0, 240, 255, ${0.15 + Math.sin(time * 4) * 0.08})`;
+          ctx.strokeStyle = `rgba(0, 240, 255, ${0.25 + Math.sin(time * 4) * 0.1})`;
           ctx.lineWidth = 2;
-          ctx.shadowColor = '#00F0FF';
-          ctx.shadowBlur = 20;
           ctx.stroke();
-          ctx.shadowBlur = 0;
         }
 
         // Main circle
