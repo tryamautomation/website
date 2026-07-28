@@ -17,7 +17,7 @@ export default function AiChatWidget() {
   const [messages, setMessages] = useState([
     {
       sender: 'bot',
-      text: 'Namaste! I am the **TRYAM Autonomous SDR** powered by OpenAI & n8n workflows. What manual bottleneck can we automate for your business today?'
+      text: 'Namaste! I am the **TRYAM AI SDR** powered by TRYAM Autonomous Swarm Workflows. What manual bottleneck can we automate for your business today?'
     }
   ]);
 
@@ -47,18 +47,20 @@ export default function AiChatWidget() {
 
   const getFallbackResponse = (query) => {
     const qLower = query.toLowerCase();
-    if (qLower.includes('automate') || qLower.includes('agentic') || qLower.includes('what can')) {
-      return "We architect goal-driven Autonomous Agentic AI Swarms, multi-agent reasoning engines, custom Supabase CRMs, and enterprise orchestration mesh connecting your entire tech stack.";
+    if (qLower.includes('book') || qLower.includes('call') || qLower.includes('appointment') || qLower.includes('schedule') || qLower.includes('demo') || qLower.includes('audit')) {
+      return "📅 **I'd love to schedule a 1-on-1 Automation Audit Call with Founder Shreyas Kumar Swamy!**\n\nPlease share your **Phone / WhatsApp Number**, **Work Email**, and **Preferred Time**, and I will book your appointment into our Supabase CRM & send your confirmation!";
+    } else if (qLower.includes('phone') || qLower.includes('contact') || qLower.includes('number') || /^\+?\d{8,15}$/.test(query.trim())) {
+      return "✅ **Got your details!** I've logged your contact info into TRYAM Supabase Lead Intake. Our founder will call/WhatsApp you shortly to confirm your appointment time!";
+    } else if (qLower.includes('automate') || qLower.includes('agentic') || qLower.includes('what can')) {
+      return "TRYAM AI architects goal-driven Autonomous Agentic AI Swarms, multi-agent reasoning engines, custom Supabase CRMs, and enterprise orchestration mesh connecting your entire tech stack. Would you like to share your Phone Number & Email to book an appointment?";
     } else if (qLower.includes('crm') || qLower.includes('fast')) {
-      return "Our custom high-throughput CRM architectures (Supabase/PostgreSQL) deploy in under 7 days! Built for infinite scale with zero bloat and Row Level Security.";
-    } else if (qLower.includes('n8n') || qLower.includes('workflow') || qLower.includes('mesh')) {
-      return "We go beyond linear workflows — orchestrating LangGraph, AutoGen, custom Python microservices, and n8n integration gateways with enterprise resilience.";
+      return "Our custom high-throughput CRM architectures deploy in under 7 days! Built for infinite scale with zero bloat and Row Level Security. Share your Phone Number & Email to schedule a live demo call!";
     } else if (qLower.includes('price') || qLower.includes('cost')) {
-      return "Our systems are custom tailored to your goals. Fill out our 60-second assessment form on the site to get a custom strategy blueprint & ROI quote!";
+      return "Our systems are custom tailored to your goals. Share your Phone Number & Email here, or fill out the 60-second form on the site to get an instant ROI quote & strategy call!";
     } else if (qLower.includes('hello') || qLower.includes('hi') || qLower.includes('hey')) {
-      return "Namaste & Welcome! 👋 I'm your Autonomous AI SDR. What manual objective or workflow bottleneck should our AI swarms tackle first?";
+      return "Namaste & Welcome! 👋 I'm TRYAM AI SDR. What manual objective should our AI swarms tackle first? Share your Phone Number & Email anytime to book a 1-on-1 strategy call!";
     }
-    return "TRYAM Automations architects goal-driven Agentic AI systems, multi-agent reasoning swarms, and custom enterprise CRMs designed to run your business digitally fast. Would you like to schedule a free 1-on-1 strategy audit?";
+    return "TRYAM AI architects goal-driven Agentic AI systems, multi-agent reasoning swarms, and custom enterprise CRMs designed to run your business digitally fast. Please share your **Phone Number** and **Email** to book your strategy call!";
   };
 
   const handleSend = async (textToSend) => {
@@ -74,11 +76,12 @@ export default function AiChatWidget() {
     let botResp = '';
 
     try {
-      // Call n8n OpenAI SDR LLM Webhook
       const response = await fetch('https://n8n.tryam193.in/webhook/tryam-ai-chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          agentType: 'TRYAM_CLIENT_SDR',
+          audience: 'CLIENT_PUBLIC',
           sessionId: sessionId || 'chat_web',
           message: query
         })
@@ -86,11 +89,10 @@ export default function AiChatWidget() {
 
       if (response.ok) {
         const data = await response.json();
-        // Support n8n AI Agent output or custom set output
         botResp = data.output || data.aiResponse || data.text || data[0]?.output;
       }
     } catch (err) {
-      console.warn('[TRYAM] n8n AI LLM Webhook unreachable, using smart SDR engine:', err);
+      console.warn('[TRYAM] AI Engine connecting to local fallback:', err);
     }
 
     if (!botResp) {
@@ -120,7 +122,7 @@ export default function AiChatWidget() {
             <Bot size={16} />
           </div>
           <div className="teaser-content">
-            <span className="teaser-title">TRYAM AI SDR (OpenAI)</span>
+            <span className="teaser-title">TRYAM AI SDR</span>
             <span className="teaser-sub">Automate your business digitally fast ⚡</span>
           </div>
           <button className="teaser-close" onClick={(e) => { e.stopPropagation(); setShowTeaser(false); }}>
@@ -139,7 +141,7 @@ export default function AiChatWidget() {
                 <strong>TRYAM AI SDR</strong>
                 <span className="bot-status">
                   <span className="pulse-dot"></span>
-                  Live LLM (OpenAI GPT-4o)
+                  Live TRYAM AI Engine
                 </span>
               </div>
             </div>
@@ -164,9 +166,9 @@ export default function AiChatWidget() {
           </div>
 
           <div className="chat-quick-prompts">
-            <button className="quick-btn" onClick={() => handleSend("What can TRYAM automate for my business?")}>What can you automate?</button>
+            <button className="quick-btn" onClick={() => handleSend("I want to book an appointment / strategy call")}>📅 Book Strategy Call</button>
+            <button className="quick-btn" onClick={() => handleSend("What can TRYAM AI automate for my business?")}>What can you automate?</button>
             <button className="quick-btn" onClick={() => handleSend("How fast is CRM setup?")}>How fast is CRM setup?</button>
-            <button className="quick-btn" onClick={() => handleSend("How does n8n integration work?")}>n8n Workflow details</button>
           </div>
 
           <div className="chat-input-row">

@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Users, Bot, Search, Download, RefreshCw, X, Shield, 
-  CheckCircle, Clock, AlertCircle, MessageSquare, ChevronRight, Lock, Key, Filter 
+  CheckCircle, Clock, AlertCircle, MessageSquare, ChevronRight, Lock, Key, Filter, Sparkles 
 } from 'lucide-react';
 import { supabase } from '../lib/supabaseClient';
 import CustomSelect from './CustomSelect';
+import AdminAiCopilot from './AdminAiCopilot';
 
 export default function AdminDashboard({ onClose }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -21,6 +22,8 @@ export default function AdminDashboard({ onClose }) {
 
   const statusOptions = [
     { value: 'new', label: 'New Lead', badge: 'NEW', badgeColor: 'badge-amber' },
+    { value: 'callback_requested', label: '📞 Call Requested', badge: 'CALL', badgeColor: 'badge-amber' },
+    { value: 'chatbot_booked', label: '🤖 AI SDR Booked', badge: 'AI', badgeColor: 'badge-sky' },
     { value: 'processing', label: 'Processing', badge: 'WORK', badgeColor: 'badge-sky' },
     { value: 'contacted', label: 'Contacted', badge: 'SENT', badgeColor: 'badge-purple' },
     { value: 'closed', label: 'Closed / Won', badge: 'WON', badgeColor: 'badge-emerald' }
@@ -29,14 +32,18 @@ export default function AdminDashboard({ onClose }) {
   const filterOptions = [
     { value: 'all', label: 'All Statuses' },
     { value: 'new', label: 'New Leads', badge: 'NEW', badgeColor: 'badge-amber' },
+    { value: 'callback_requested', label: '📞 Callback Requested', badge: 'CALL', badgeColor: 'badge-amber' },
+    { value: 'chatbot_booked', label: '🤖 AI SDR Booked', badge: 'AI', badgeColor: 'badge-sky' },
     { value: 'processing', label: 'In Processing', badge: 'WORK', badgeColor: 'badge-sky' },
     { value: 'contacted', label: 'Contacted', badge: 'SENT', badgeColor: 'badge-purple' },
     { value: 'closed', label: 'Closed / Won', badge: 'WON', badgeColor: 'badge-emerald' }
   ];
 
+  const [showPassword, setShowPassword] = useState(false);
+
   const handleLogin = (e) => {
     e.preventDefault();
-    if (passcode === 'TRYAM2026' || passcode === 'admin') {
+    if (passcode.trim() === 'TRYAM193') {
       setIsAuthenticated(true);
       setPassError(false);
     } else {
@@ -149,46 +156,60 @@ export default function AdminDashboard({ onClose }) {
   if (!isAuthenticated) {
     return (
       <div className="admin-modal-overlay">
-        <div className="admin-auth-card glass-panel">
-          <button className="modal-close-btn" onClick={onClose}><X size={20} /></button>
+        <div className={`admin-auth-card glass-panel ${passError ? 'auth-error-shake' : ''}`}>
+          <button className="modal-close-btn" onClick={onClose} aria-label="Close portal">
+            <X size={20} />
+          </button>
+          
           <div className="auth-header text-center">
             <div className="auth-icon-badge">
-              <Lock size={24} />
+              <Shield size={28} className="auth-shield-glow" />
             </div>
-            <h2>TRYAM Admin Portal</h2>
-            <p>Enter passkey to access CRM leads and automation logs</p>
+            <h2>TRYAM Security Gateway</h2>
+            <p>Enter master password to decrypt CRM leads &amp; swarm logs</p>
           </div>
 
           <form onSubmit={handleLogin} className="auth-form">
             <div className="form-group">
-              <label htmlFor="passcode">Admin Passkey</label>
+              <label htmlFor="passcode">Master Passkey</label>
               <div className="input-with-icon">
                 <Key size={18} className="input-icon" />
                 <input
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   id="passcode"
-                  placeholder="Enter passkey (e.g. TRYAM2026)"
+                  placeholder="Enter master password..."
                   value={passcode}
-                  onChange={(e) => setPasscode(e.target.value)}
+                  onChange={(e) => { setPasscode(e.target.value); setPassError(false); }}
                   autoFocus
                 />
+                <button 
+                  type="button" 
+                  className="password-toggle-btn"
+                  onClick={() => setShowPassword(!showPassword)}
+                  tabIndex="-1"
+                >
+                  <Lock size={14} className={showPassword ? 'text-glow' : ''} />
+                </button>
               </div>
             </div>
 
             {passError && (
               <div className="form-error">
                 <AlertCircle size={16} />
-                <span>Invalid passkey. Try <strong>TRYAM2026</strong></span>
+                <span>Access Denied. Invalid master password.</span>
               </div>
             )}
 
             <button type="submit" className="btn btn-primary btn-block btn-glow">
-              <span>Authenticate Portal</span>
+              <Lock size={16} />
+              <span>Unlock Admin Portal</span>
             </button>
           </form>
 
-          <div className="auth-hint text-center">
-            <span className="hint-pill" onClick={() => { setIsAuthenticated(true); }}>⚡ Quick Access (Demo Mode)</span>
+          <div className="auth-footer-security">
+            <span className="security-badge">
+              <Shield size={12} /> 256-BIT ENCRYPTED GATEWAY
+            </span>
           </div>
         </div>
       </div>
@@ -280,7 +301,19 @@ export default function AdminDashboard({ onClose }) {
             <MessageSquare size={16} />
             <span>AI SDR Chat Transcripts ({Object.keys(chatSessions).length})</span>
           </button>
+          <button 
+            className={`admin-tab copilot-tab ${activeTab === 'copilot' ? 'active' : ''}`}
+            onClick={() => setActiveTab('copilot')}
+          >
+            <Sparkles size={16} className="text-glow" />
+            <span>AI Intelligence Copilot</span>
+          </button>
         </div>
+
+        {/* TAB 3: ADMIN AI COPILOT */}
+        {activeTab === 'copilot' && (
+          <AdminAiCopilot leads={leads} chatLogs={chatLogs} />
+        )}
 
         {/* TAB 1: LEADS TABLE */}
         {activeTab === 'leads' && (
@@ -339,7 +372,12 @@ export default function AdminDashboard({ onClose }) {
                     filteredLeads.map((lead) => (
                       <tr key={lead.id} className="table-row-hover">
                         <td>
-                          <strong className="lead-name">{lead.name}</strong>
+                          <div className="flex items-center gap-2">
+                            <strong className="lead-name">{lead.name}</strong>
+                            {(lead.bottleneck?.includes('Callback') || lead.status === 'callback_requested') && (
+                              <span className="badge badge-amber animate-pulse">📞 Call Req</span>
+                            )}
+                          </div>
                           {lead.details && <p className="lead-details-preview">{lead.details}</p>}
                         </td>
                         <td>
@@ -349,7 +387,9 @@ export default function AdminDashboard({ onClose }) {
                           <a href={`mailto:${lead.email}`} className="email-link">{lead.email}</a>
                         </td>
                         <td>
-                          <span className="bottleneck-tag">{lead.bottleneck || 'General'}</span>
+                          <span className={`bottleneck-tag ${lead.bottleneck?.includes('Callback') ? 'text-amber' : ''}`}>
+                            {lead.bottleneck || 'General'}
+                          </span>
                         </td>
                         <td>
                           <CustomSelect

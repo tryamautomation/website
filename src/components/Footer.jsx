@@ -68,7 +68,7 @@ export default function Footer() {
             </button>
             <button className="footer-legal-btn legal-warning" onClick={() => setLegalModalTab('scraping')}>
               <Bot size={13} />
-              <span>AI Scraping & Bot Disclaimer</span>
+              <span>AI &amp; Bot Scraping Policy</span>
             </button>
           </div>
         </div>

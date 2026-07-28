@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Moon, Flame, ArrowRight, Menu, X, Shield } from 'lucide-react';
+import { Moon, Flame, ArrowRight, Menu, X } from 'lucide-react';
 
-export default function Navbar({ theme, onToggleTheme, onOpenAdmin }) {
+export default function Navbar({ theme, onToggleTheme }) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
@@ -25,10 +25,6 @@ export default function Navbar({ theme, onToggleTheme, onOpenAdmin }) {
           <a href="#solutions" className="nav-link" onClick={() => setMobileOpen(false)}>Solutions</a>
           <a href="#calculator" className="nav-link" onClick={() => setMobileOpen(false)}>ROI Calculator</a>
           <a href="#integrations" className="nav-link" onClick={() => setMobileOpen(false)}>Ecosystem</a>
-          <button className="nav-link admin-nav-link" onClick={() => { setMobileOpen(false); onOpenAdmin(); }}>
-            <Shield size={14} className="inline-icon" />
-            <span>Admin CRM</span>
-          </button>
           <a href="#contact" className="nav-link nav-link-mobile" onClick={() => setMobileOpen(false)}>Book Audit</a>
         </nav>
 
@@ -45,11 +41,6 @@ export default function Navbar({ theme, onToggleTheme, onOpenAdmin }) {
                 <span>Raudra</span>
               </div>
             )}
-          </button>
-
-          <button className="btn btn-secondary admin-btn-nav" onClick={onOpenAdmin} title="Open CRM Console">
-            <Shield size={14} />
-            <span>Admin Portal</span>
           </button>
 
           <a href="#contact" className="btn btn-primary nav-cta-btn">

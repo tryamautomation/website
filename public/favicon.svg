@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <linearGradient id="tryamGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00F0FF"/>
+      <stop offset="50%" stop-color="#38BDF8"/>
+      <stop offset="100%" stop-color="#7000FF"/>
+    </linearGradient>
+    <filter id="glowEffect" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="12" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+  <rect width="512" height="512" rx="128" fill="#040810"/>
+  <!-- Outer glowing neural ring -->
+  <circle cx="256" cy="256" r="190" fill="none" stroke="url(#tryamGlow)" stroke-width="12" stroke-dasharray="24 12" opacity="0.8"/>
+  <!-- Central Trishula / AI Tri-Swarm Trident -->
+  <g filter="url(#glowEffect)">
+    <!-- Central Spear -->
+    <path d="M256 80 L276 180 L256 160 L236 180 Z" fill="url(#tryamGlow)"/>
+    <line x1="256" y1="160" x2="256" y2="410" stroke="url(#tryamGlow)" stroke-width="20" stroke-linecap="round"/>
+    <!-- Left Spear Curve -->
+    <path d="M160 140 C150 240, 240 280, 240 280" fill="none" stroke="url(#tryamGlow)" stroke-width="16" stroke-linecap="round"/>
+    <path d="M160 140 L180 200 L160 185 L140 200 Z" fill="url(#tryamGlow)"/>
+    <!-- Right Spear Curve -->
+    <path d="M352 140 C362 240, 272 280, 272 280" fill="none" stroke="url(#tryamGlow)" stroke-width="16" stroke-linecap="round"/>
+    <path d="M352 140 L372 200 L352 185 L332 200 Z" fill="url(#tryamGlow)"/>
+    <!-- Base Node -->
+    <circle cx="256" cy="410" r="18" fill="#00F0FF"/>
+  </g>
+</svg>

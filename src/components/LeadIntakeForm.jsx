@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { ShieldCheck, Zap, ArrowRight, Send, CheckCircle2, AlertCircle, Layers } from 'lucide-react';
-import { supabase } from '../lib/supabaseClient';
 import CustomSelect from './CustomSelect';
 
 export default function LeadIntakeForm() {
@@ -9,6 +8,7 @@ export default function LeadIntakeForm() {
     name: '',
     company: '',
     email: '',
+    phone: '',
     bottleneck: '',
     details: ''
   });
@@ -29,8 +29,8 @@ export default function LeadIntakeForm() {
   };
 
   const handleNext = () => {
-    if (!formData.name || !formData.company || !formData.email) {
-      setError('Please complete all fields before continuing.');
+    if (!formData.name || !formData.company || !formData.email || !formData.phone) {
+      setError('Please complete all required fields including your phone number before continuing.');
       return;
     }
     // Basic email validation
@@ -48,29 +48,29 @@ export default function LeadIntakeForm() {
     setError(null);
 
     try {
-      const { error: supabaseError } = await supabase
-        .from('leads')
-        .insert({
+      // POST to n8n Lead Processor webhook — fires full pipeline:
+      // Supabase insert → client email → admin email → client WhatsApp → admin WhatsApp
+      const response = await fetch('https://n8n.tryam193.in/webhook/tryam-new-lead', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
           name: formData.name.trim(),
           company: formData.company.trim(),
           email: formData.email.trim().toLowerCase(),
+          phone: formData.phone.trim(),
           bottleneck: formData.bottleneck || '',
           details: formData.details.trim(),
-          status: 'new'
-        });
+        }),
+      });
 
-      if (supabaseError) {
-        throw supabaseError;
+      if (!response.ok) {
+        throw new Error(`Webhook error: ${response.status}`);
       }
 
       setSubmitted(true);
     } catch (err) {
       console.error('[TRYAM] Lead submission error:', err);
-      setError(
-        err.message?.includes('placeholder')
-          ? 'Supabase not configured yet. Add your credentials to the .env file.'
-          : 'Something went wrong. Please try again or email us directly.'
-      );
+      setError('Something went wrong. Please try again or WhatsApp us at +91 8217037173.');
     } finally {
       setSubmitting(false);
     }
@@ -147,6 +147,17 @@ export default function LeadIntakeForm() {
                         value={formData.email}
                         onChange={handleChange}
                         placeholder="alex@acme.com"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor="phone">Phone / WhatsApp Number *</label>
+                      <input
+                        type="tel"
+                        id="phone"
+                        required
+                        value={formData.phone}
+                        onChange={handleChange}
+                        placeholder="e.g. +91 9876543210 or +1 (555) 000-1234"
                       />
                     </div>
                     <button type="button" className="btn btn-primary btn-block" onClick={handleNext}>
