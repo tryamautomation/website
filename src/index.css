@@ -2834,3 +2834,228 @@ strong {
     color: #FFF;
     font-family: var(--font-code);
 }
+
+/* ==========================================================================
+   COMPREHENSIVE MOBILE RESPONSIVE STYLES
+   ========================================================================== */
+
+/* -- TABLET (max-width: 1024px) -- */
+@media (max-width: 1024px) {
+  .premium-copilot-container {
+    height: auto;
+    flex-direction: column;
+  }
+  .premium-chat-panel {
+    flex: 0 0 auto;
+    border-right: none;
+    border-bottom: 1px solid rgba(0, 240, 255, 0.15);
+    min-height: 500px;
+  }
+  .premium-telemetry-panel {
+    flex: 0 0 auto;
+  }
+  .admin-stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .contact-wrapper { gap: 28px; padding: 28px; }
+  .calculator-wrapper { gap: 24px; padding: 28px; }
+  .chat-logs-grid { grid-template-columns: 1fr; }
+  .session-list { border-right: none; padding-right: 0; padding-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+}
+
+/* -- MOBILE (max-width: 768px) -- */
+@media (max-width: 768px) {
+  /* === General Layout === */
+  .section-padding { padding: 50px 0; }
+  .section-header { margin-bottom: 28px; }
+  .section-title { font-size: 1.5rem; }
+  .section-subtitle { font-size: 0.88rem; }
+  .container { padding: 0 16px; }
+
+  /* === Hero === */
+  .hero-section { padding-top: 100px; padding-bottom: 40px; }
+  .hero-inner { margin: 0 auto 32px auto; }
+  .workflow-visualizer-card { padding: 14px 12px; }
+  .visualizer-header { flex-wrap: wrap; gap: 8px; }
+  .pipeline-diagram { flex-wrap: wrap; justify-content: center; }
+  .node { flex: 1 1 calc(50% - 20px); min-width: 140px; }
+  .connector-line { display: none; }
+  .hero-stats { flex-wrap: wrap; gap: 12px; padding: 14px; }
+  .stat-item { flex: 0 0 45%; }
+  .stat-number { font-size: 1.4rem; }
+  .stat-divider { display: none; }
+
+  /* === Solutions === */
+  .solution-card { padding: 24px 20px; }
+  .solution-card:hover { transform: translateY(-4px) rotateY(0) rotateX(0); }
+
+  /* === ROI Calculator === */
+  .calculator-wrapper { padding: 20px; gap: 20px; }
+  .res-amount { font-size: 1.4rem; }
+
+  /* === Contact Form === */
+  .contact-wrapper { padding: 20px; gap: 20px; }
+  .contact-info h2 { font-size: 1.4rem; }
+
+  /* === Ecosystem === */
+  .ecosystem-grid { gap: 8px; }
+  .eco-badge { padding: 8px 14px; font-size: 0.78rem; }
+
+  /* === Footer === */
+  .footer-bottom {
+    flex-direction: column;
+    gap: 12px;
+    text-align: center;
+  }
+  .footer-links-grid { gap: 20px; }
+
+  /* === Admin Dashboard === */
+  .admin-dashboard-view { padding-top: 80px; padding-bottom: 40px; }
+  .admin-nav-inner {
+    flex-direction: column;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .admin-title-group h1 { font-size: 1.3rem; }
+  .admin-actions { width: 100%; justify-content: flex-start; flex-wrap: wrap; }
+  .admin-stats-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .admin-stat-card { padding: 16px; }
+  .admin-stat-card .stat-value { font-size: 1.6rem; }
+  .admin-tabs-bar {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 6px;
+    gap: 8px;
+  }
+  .admin-tab { white-space: nowrap; flex-shrink: 0; padding: 8px 16px; font-size: 0.82rem; }
+  .table-controls-row {
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+  }
+  .search-box { max-width: 100%; }
+  .filter-group { width: 100%; justify-content: flex-start; }
+  .admin-table-wrapper { padding: 16px; }
+  .admin-table th, .admin-table td { padding: 10px 12px; font-size: 0.8rem; }
+  .chat-logs-grid { grid-template-columns: 1fr; min-height: auto; }
+  .session-list {
+    border-right: none;
+    padding-right: 0;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    max-height: 200px;
+    overflow-y: auto;
+  }
+
+  /* === AI Chat Widget === */
+  .ai-widget { bottom: 12px; right: 12px; }
+  .widget-chat-box {
+    width: calc(100vw - 24px);
+    max-width: 380px;
+    height: 420px;
+    max-height: 75vh;
+    right: -4px;
+    bottom: 56px;
+  }
+  .chat-teaser-bubble { max-width: 240px; }
+
+  /* === Agentic Sandbox === */
+  .neural-split-layout { height: auto; flex-direction: column; }
+  .neural-left-panel { flex: 0 0 auto; }
+  .neural-right-panel { min-height: 300px; }
+  .neural-top-bar { flex-direction: column; gap: 12px; align-items: stretch; }
+  .scenario-chips { justify-content: center; }
+  .btn-execute-swarm { padding: 10px 20px; font-size: 0.78rem; width: 100%; justify-content: center; }
+  .live-status-indicators { justify-content: center; flex-wrap: wrap; gap: 10px; }
+  .neural-bottom-bar { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .neural-metrics-row { flex-wrap: wrap; gap: 10px; padding: 10px; }
+  .neural-canvas-wrapper { min-height: 220px; }
+
+  /* === Admin AI Copilot === */
+  .premium-copilot-container { height: auto; flex-direction: column; border-radius: var(--border-radius-md); }
+  .premium-chat-panel {
+    flex: 0 0 auto;
+    min-height: 420px;
+    border-right: none;
+    border-bottom: 1px solid rgba(0,240,255,0.15);
+  }
+  .premium-telemetry-panel { flex: 0 0 auto; padding: 16px; gap: 20px; }
+  .p-copilot-header { padding: 12px 16px; }
+  .p-header-left { gap: 10px; }
+  .p-avatar-pulse { width: 36px; height: 36px; }
+  .p-header-titles h3 { font-size: 0.95rem; }
+  .p-header-status { font-size: 0.68rem; }
+  .p-chat-scroll { padding: 16px; gap: 14px; }
+  .p-msg-wrapper { max-width: 95%; }
+  .p-msg-bubble { padding: 10px 14px; font-size: 0.82rem; }
+  .p-chat-bottom { padding: 12px 16px; }
+  .p-chat-input { padding: 12px 16px; font-size: 0.88rem; }
+  .p-send-btn { width: 42px; height: 42px; }
+  .telemetry-metrics-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .tm-value { font-size: 1.4rem; }
+  .t-metric-card { padding: 12px; }
+
+  /* === Legal Modal === */
+  .legal-modal-overlay { padding: 12px; }
+  .legal-modal-card { padding: 18px; max-height: 90vh; }
+  .legal-modal-header h2 { font-size: 1.2rem; }
+  .legal-tabs-bar {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 6px;
+  }
+  .legal-tab { white-space: nowrap; flex-shrink: 0; padding: 6px 12px; font-size: 0.75rem; }
+  .legal-modal-footer {
+    flex-direction: column;
+    gap: 10px;
+    text-align: center;
+  }
+
+  /* === Floating orbs smaller on mobile === */
+  .section-padding::before { width: 250px; height: 250px; }
+  .section-padding::after { width: 200px; height: 200px; }
+  .glow-orb.orb-1 { width: 300px; height: 300px; }
+  .glow-orb.orb-2 { width: 250px; height: 250px; }
+
+  .portal-menu { min-width: 160px; }
+}
+
+/* -- SMALL MOBILE (max-width: 480px) -- */
+@media (max-width: 480px) {
+  .hero-title { font-size: 1.8rem; }
+  .hero-subtitle { font-size: 0.88rem; }
+  .hero-cta-group { flex-direction: column; gap: 10px; }
+  .hero-cta-group .btn { width: 100%; }
+  .node { flex: 1 1 100%; }
+  .stat-item { flex: 0 0 100%; }
+  .hero-stats { padding: 12px; gap: 10px; }
+  .section-title { font-size: 1.3rem; }
+  .section-badge { font-size: 0.65rem; padding: 4px 10px; }
+  .admin-stats-grid { grid-template-columns: 1fr; }
+  .admin-tab { padding: 6px 12px; font-size: 0.75rem; }
+  .live-status-indicators { display: none; }
+  .scenario-chip { font-size: 0.65rem; padding: 5px 10px; }
+  .neural-bottom-bar { grid-template-columns: 1fr; }
+  .neural-canvas-wrapper { min-height: 180px; }
+  .widget-chat-box { width: calc(100vw - 16px); right: -4px; }
+  .chat-quick-prompts { gap: 4px; }
+  .quick-btn { font-size: 0.65rem; padding: 4px 8px; }
+  .premium-chat-panel { min-height: 360px; }
+  .telemetry-metrics-grid { grid-template-columns: 1fr; }
+  .footer-links-grid { grid-template-columns: 1fr; gap: 24px; }
+  .footer-direct-contact { justify-content: center; }
+  .app-root::after { display: none; }
+  .section-padding::before,
+  .section-padding::after { display: none; }
+  .glass-panel { animation: none; }
+}
+
+/* -- REDUCED MOTION -- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
